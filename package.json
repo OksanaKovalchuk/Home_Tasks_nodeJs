@@ -5,13 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "task1": "node src/task1/task1_1.js",
-    "task2": "node src/task1/task1_2.js",
-    "babel": "./node_modules/.bin/babel",
-    "compile1": "npm run babel src/task1/task1_1.js -- --out-file compiledTask1.js",
-    "compile2": "npm run babel src/task1/task1_2.js -- --out-file compiledTask2.js",
-    "task3": "npm run compile1 && npm run compile2",
-    "dev_task2_1": "ts-node-dev --respawn --pretty --transpile-only src/task3/task2_1.ts"
+    "task2_1": "ts-node-dev --respawn --pretty --transpile-only src/task2/task2_1_index.ts"
   },
   "repository": {
     "type": "git",
