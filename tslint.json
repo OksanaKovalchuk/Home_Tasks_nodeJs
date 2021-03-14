@@ -5,6 +5,9 @@
   ],
   "jsRules": {},
   "rules": {
-    "trailing-comma": [ false ]
+    "trailing-comma": [
+      false
+    ]
   },
   "rulesDirectory": []
+}
