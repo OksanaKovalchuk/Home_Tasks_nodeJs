@@ -2,7 +2,7 @@
  * Data Model Interfaces
  */
 // @ts-ignore
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { BaseUser, User } from './user.interface';
 import { Users } from './users.interface';
 
@@ -33,6 +33,9 @@ const users: Users = {
 
 export const findAll = async (): Promise<User[]> => Object.values(users);
 
+export const getAutoSuggestUsers = async (loginSubstring: string, limit: number): Promise<User[]> =>
+    Object.values(users).filter(user => user.login.startsWith(loginSubstring)).slice(0, limit);
+
 export const find = async (id: number): Promise<User> => users[id];
 
 export const create = async (newUser: BaseUser): Promise<User> => {
@@ -57,7 +60,7 @@ export const update = async (
         return null;
     }
 
-    users[id] = { id, isDeleted: user.isDeleted, ...userUpdate };
+    users[id] = { id, ...user,  ...userUpdate };
 
     return users[id];
 };
