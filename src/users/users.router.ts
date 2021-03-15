@@ -9,7 +9,6 @@ import { BaseUser, User } from './user.interface';
 /**
  * Router Definition
  */
-
 export const usersRouter = express.Router();
 /**
  * Controller Definitions

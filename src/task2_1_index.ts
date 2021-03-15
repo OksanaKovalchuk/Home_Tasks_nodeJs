@@ -6,6 +6,7 @@ import * as dotenv from 'dotenv';
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+
 import { usersRouter } from './users/users.router';
 
 dotenv.config();
@@ -39,5 +40,5 @@ app.use('/api/users', usersRouter);
  */
 
 app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`);
+    // console.log(`Listening on port ${PORT}`);
 });

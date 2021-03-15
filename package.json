@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "task2_1": "ts-node-dev --respawn --pretty --transpile-only src/task2/task2_1_index.ts"
+    "task2_1": "ts-node-dev --respawn --pretty --transpile-only src/task2_1_index.ts"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,9 @@
   },
   "homepage": "https://github.com/OksanaKovalchuk/Home_Tasks_nodeJs#readme",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-0": "^6.24.1",
     "@babel/core": "^7.13.8",
     "@babel/preset-env": "^7.13.8",
     "@types/cors": "^2.8.10",
@@ -36,6 +39,7 @@
   },
   "dependencies": {
     "@babel/cli": "^7.13.0",
+    "ajv": "^7.2.1",
     "csvtojson": "^2.0.10",
     "express": "^4.17.1",
     "joi": "^17.4.0",

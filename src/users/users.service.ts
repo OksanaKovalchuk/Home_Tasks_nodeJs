@@ -1,16 +1,17 @@
 /**
  * Data Model Interfaces
  */
-
+// @ts-ignore
+import {v4 as uuidv4} from 'uuid';
 import { BaseUser, User } from './user.interface';
 import { Users } from './users.interface';
-
+import Ajv from "ajv";
 
 /**
  * In-Memory Store
  */
 
-let users: Users = {
+const users: Users = {
     1: {
         id: 1,
         login: 'John',
@@ -27,6 +28,21 @@ let users: Users = {
     }
 }
 
+const schema = {
+    properties: {
+        login: { type: 'string' },
+        password: { type: 'string' },
+        age: { type: 'number' },
+        isDeleted: { type: 'boolean' },
+    },
+    required: ['login', 'password', 'age'],
+    optionalProperties: {
+        bar: {type: "string"}
+    }
+}
+
+const ajv = new Ajv();
+const validate = ajv.compile(schema)
 
 /**
  * Service Methods
@@ -37,8 +53,12 @@ export const findAll = async (): Promise<User[]> => Object.values(users);
 export const find = async (id: number): Promise<User> => users[id];
 
 export const create = async (newUser: BaseUser): Promise<User> => {
-    const id = new Date().valueOf();
-
+    const id = uuidv4();
+    const valid = validate(newUser)
+    if (!valid) {
+        // tslint:disable-next-line:no-console
+        console.log(validate.errors)
+    }
     users[id] = {
         id,
         ...newUser,
@@ -62,13 +82,15 @@ export const update = async (
     return users[id];
 };
 
-export const remove = async (id: number): Promise<null | void> => {
+export const remove = async (id: number): Promise<User> => {
     const user = await find(id);
 
     if (!user) {
         return null;
     }
 
-    delete users[id];
+    users[id] = { ...user, isDeleted: true };
+
+    return users[id];
 }
 
