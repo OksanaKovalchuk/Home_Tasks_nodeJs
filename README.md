@@ -28,7 +28,7 @@ To add new user via console, run:
 "login": "Test",
 "password": 'abrakadabra',
 "age": "45",
-"isDeleted: false"
+"isDeleted": "false"
 }' http://localhost:7000/api/users -i`
 
 ##
@@ -39,8 +39,15 @@ To add new user via console, run:
 "login": "Janny",
 "password": 'abrakadabra',
 "age": "45",
-"isDeleted: false"
+"isDeleted": "false"
 }' http://localhost:7000/api/users/2 -i`
+
+
+##
+To get by loginString run, limited by some number and sorted alphabetically:
+
+
+`curl http://localhost:7000/api/users/search?loginSubstring=Jo&limit=1000 -i`
 
 
 ###
