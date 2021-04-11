@@ -10,7 +10,6 @@ import { usersRouter } from './routers/users.router';
 
 dotenv.config();
 
-
 /**
  * App Variables
  *
@@ -23,8 +22,6 @@ if (!process.env.PORT) {
 const PORT: number = parseInt(process.env.PORT as string, 10);
 
 const app = express();
-
-
 
 /**
  *  App Configuration
