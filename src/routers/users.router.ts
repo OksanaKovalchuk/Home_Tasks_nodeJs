@@ -1,17 +1,27 @@
 /**
  * Required External Modules and Interfaces
  */
-
 import express, { Request, Response } from 'express';
+import Sequelize from 'sequelize';
 import * as UserService from '../services/users.service';
-import { BaseUser, User } from '../models/user.interface';
-import { validationSchema } from '../config/users.validation';
+import {  User } from '../data-access/db.config';
+
+/**
+ * @param validateError
+ */
+const validatorMapping = (validateError: { errors: any[]; }) => validateError?.errors.map((error: any) => ({
+    'name': error.path,
+    'type': error.type,
+    'message': error.message,
+    'rule': error.validatorKey === 'is' ? error.validatorArgs: null
+}))
 
 /**
  * Router Definition
  */
 
 export const usersRouter = express.Router();
+
 /**
  * Controller Definitions
  */
@@ -19,9 +29,10 @@ export const usersRouter = express.Router();
 // GET users
 usersRouter.get('/', async (req: Request, res: Response) => {
     try {
-        const users: User[] = await UserService.findAll();
+        // @ts-ignore
+        const users = await UserService.findAll();
 
-        res.status(200).send(users);
+        res.send(users);
     } catch (e) {
         res.status(500).send(e.message);
     }
@@ -29,13 +40,12 @@ usersRouter.get('/', async (req: Request, res: Response) => {
 
 // GET users/search?loginSubstring=:loginSubstring&limit=:limit
 usersRouter.get('/search', async(req: Request, res: Response) => {
-    const loginSubstring = req.query.loginSubstring || '';
-    const limit = req.query.limit || 20;
+    const loginSubstring = req.query.loginSubstring?.toString() || '';
+    const limit = Number(req.query.limit);
     try {
-        // @ts-ignore
-        const users: User[] = await UserService.findAll(loginSubstring, limit);
+        const users = await UserService.findAll(loginSubstring, limit);
 
-        res.status(200).send(users);
+        res.send(users);
     } catch (e) {
         res.status(500).send(e.message);
     }
@@ -46,10 +56,10 @@ usersRouter.get('/:id', async(req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
 
     try {
-        const user: User = await UserService.find(id);
+        const user = await UserService.find(id);
 
         if (user) {
-            return res.status(200).send(user);
+            return res.send(user);
         }
 
         res.status(404).send('user not found');
@@ -61,34 +71,42 @@ usersRouter.get('/:id', async(req: Request, res: Response) => {
 // POST users
 usersRouter.post('/', async(req: Request, res: Response) => {
     try {
-        const user: BaseUser = req.body;
+        const user: User = req.body;
         const newUser = await UserService.create(user);
 
         res.status(201).json(newUser);
     } catch (e) {
-        res.status(500).send(e.message);
+        if (e instanceof Sequelize.ValidationError) {
+            res.status(400).send(validatorMapping(e));
+        } else {
+            res.status(500).send(e.message);
+        }
     }
 });
 
 // PUT users/:id
-usersRouter.put('/:id', async(req: Request, res: Response) => {
+usersRouter.patch('/:id', async(req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
 
     try {
         const userUpdate: User = req.body;
 
-        const existingUser: User = await UserService.find(id);
+        const existingUser = await UserService.find(id);
 
         if (existingUser) {
             const updatedUser = await UserService.update(id, userUpdate);
-            return res.status(200).json(updatedUser);
+            return res.json(updatedUser);
         }
 
         const newUser = await UserService.create(userUpdate);
 
         res.status(201).json(newUser);
     } catch (e) {
-        res.status(500).send(e.message);
+        if (e instanceof Sequelize.ValidationError) {
+            res.status(400).send(validatorMapping(e));
+        } else {
+            res.status(500).send(e.message);
+        }
     }
 });
 
