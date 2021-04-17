@@ -42,7 +42,9 @@
     "express": "^4.17.1",
     "joi": "^17.4.0",
     "node-tweet-stream": "^2.0.3",
+    "pg": "^8.6.0",
     "request": "^2.88.2",
+    "sequelize": "^6.6.2",
     "uuid": "^8.3.2"
   }
 }

@@ -4,7 +4,7 @@
 import express, { Request, Response } from 'express';
 import Sequelize from 'sequelize';
 import * as UserService from '../services/users.service';
-import {  User } from '../data-access/db.config';
+import {  User } from '../models/user';
 
 /**
  * @param validateError

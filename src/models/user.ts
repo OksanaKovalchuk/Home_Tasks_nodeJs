@@ -1,6 +1,6 @@
 import { Sequelize, TEXT, BOOLEAN, INTEGER } from 'sequelize';
-import { DATABASE_CONFIG } from './database';
-// import { DATABASE_CONFIG } from './p_database';
+import { DATABASE_CONFIG } from '../config/database';
+// import { DATABASE_CONFIG } from '../config/p_database';
 
 const USER_CONSTRUCTOR = {
     login: {

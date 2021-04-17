@@ -1,24 +1,37 @@
-/**
- * Data Model Interfaces
- */
-// @ts-ignore
-import {v4 as uuidv4} from 'uuid';
-import controller from '../controllers/users.controller';
-import { User } from '../data-access/db.config';
+import {Op, User} from '../models/user';
 
 /**
  * Service Methods
  */
 
-export const findAll = async (loginSubstring: string, limit: number): Promise<any> =>
-    await controller.findAll(loginSubstring, limit);
+/**
+ * Retrieve all Users from the database.
+ * @param loginSubstring
+ * @param limitValue
+ */
+export const findAll = async (loginSubstring: string, limitValue: number): Promise<any> => {
+    const condition = loginSubstring ? { login: { [Op.iLike]: `%${loginSubstring}%` } }: null;
+    const limit = limitValue || null;
+    return await User.findAndCountAll({ where: condition, limit }).catch(err => {throw Error(err)});
+}
 
-export const find = (id: number): Promise<any> => controller.findOne(id);
+/**
+ * Find a single User with an id
+ * @param id
+ */
+export const find = async (id: number): Promise<any> => await User.findByPk(id);
 
-export const create = async (newUser: User): Promise<any> => {
-    return controller.create(newUser);
-};
+/**
+ * Create and Save a new User
+ * @param newUser
+ */
+export const create = async (newUser: User): Promise<any> => await User.create(newUser);
 
+/**
+ *  Update a User by the id in the request
+ * @param id
+ * @param userUpdate
+ */
 export const update = async (
     id: number,
     userUpdate: User
@@ -29,9 +42,15 @@ export const update = async (
         return null;
     }
 
-    return controller.update(userUpdate, id);
+    return User.update(userUpdate, {
+        where: { id }
+    }).then(() => find(id));
 };
 
+/**
+ * Delete a User with the specified id in the request
+ * @param id
+ */
 export const remove = async (id: number): Promise<any> => {
     const user = await find(id);
 
@@ -39,6 +58,6 @@ export const remove = async (id: number): Promise<any> => {
         return null;
     }
 
-    return controller.deleteUser({ ...user }, id);
+    return update(id, { ...user, isDeleted: true });
 }
 
