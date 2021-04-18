@@ -1,6 +1,5 @@
-import { Sequelize, TEXT, BOOLEAN, INTEGER } from 'sequelize';
-import { DATABASE_CONFIG } from '../config/database';
-// import { DATABASE_CONFIG } from '../config/p_database';
+import { TEXT, BOOLEAN, INTEGER } from 'sequelize';
+import { sequelize } from '../data-access/db.config';
 
 const USER_CONSTRUCTOR = {
     login: {
@@ -32,18 +31,7 @@ const USER_CONSTRUCTOR = {
         allowNull: true,
     },
 };
-/**
- * Database config
- */
-const { databaseName, username, password, poolSettings } = DATABASE_CONFIG;
-export const sequelize = new Sequelize(databaseName, username, password, poolSettings);
-sequelize
-    .authenticate()
-    .then(() => console.log('Connection has been established successfully.'))
-    .catch(error => console.error('Unable to connect to the database:', error));
 
-// @ts-ignore
-export const Op = Sequelize.Op;
 export const User = sequelize.define('users', USER_CONSTRUCTOR, {
     timestamps: false,
     schema: 'public',

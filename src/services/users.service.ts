@@ -1,4 +1,5 @@
-import {Op, User} from '../models/user';
+import { Op } from '../data-access/db.config';
+import { User } from '../models/user';
 
 /**
  * Service Methods

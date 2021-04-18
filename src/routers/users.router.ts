@@ -4,17 +4,9 @@
 import express, { Request, Response } from 'express';
 import Sequelize from 'sequelize';
 import * as UserService from '../services/users.service';
-import {  User } from '../models/user';
+import { validatorMapping } from '../utils/validator.utils';
+import { User } from '../models/user';
 
-/**
- * @param validateError
- */
-const validatorMapping = (validateError: { errors: any[]; }) => validateError?.errors.map((error: any) => ({
-    'name': error.path,
-    'type': error.type,
-    'message': error.message,
-    'rule': error.validatorKey === 'is' ? error.validatorArgs: null
-}))
 
 /**
  * Router Definition

@@ -7,6 +7,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { usersRouter } from './routers/users.router';
+import { groupsRouter } from './routers/groups.router';
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use('/api/users', usersRouter);
+app.use('/api/groups', groupsRouter);
 
 /**
  * Server Activation
