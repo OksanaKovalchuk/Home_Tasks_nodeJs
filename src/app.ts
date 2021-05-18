@@ -41,8 +41,10 @@ app.listen(PORT, () => {
     // console.log(`Listening on port ${PORT}`);
 });
 
-app.use((err: { message: any; }, req: { method: any; originalUrl: any; ip: any; }, res: any, next: (arg0: any) => void) => {
-    logger.error(`${req.method} - ${err.message}  - ${req.originalUrl} - ${req.ip}`);
+app.use((err: {
+    type: any;
+    message: any; }, req: { method: any; originalUrl: any; ip: any; }, res: any, next: (arg0: any) => void) => {
+    logger.error(`${req.method} - ${err.message} - ${err.type} - ${req.originalUrl} - ${req.ip}`);
     next(err);
     res.send(500);
 })

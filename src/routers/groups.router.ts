@@ -22,6 +22,7 @@ groupsRouter.get('/', async (req: Request, res: Response) => {
         logger.info(`method called: 'findAll', with params: no params`);
         res.send(groupList);
     } catch (e) {
+        logger.error(`method called: 'findAll', with params: no params - ${ e.message }`);
         res.status(500).send(e.message);
     }
 });
@@ -41,6 +42,7 @@ groupsRouter.get('/:id', async(req: Request, res: Response) => {
 
         res.status(404).send('Group was not found');
     } catch (e) {
+        logger.error(`method called: 'find', with params: ${JSON.stringify({ id })} - ${ e.message }`);
         res.status(500).send(e.message);
     }
 });
@@ -57,6 +59,7 @@ groupsRouter.post('/', async(req: Request, res: Response) => {
         if (e instanceof Sequelize.ValidationError) {
             res.status(400).send(validatorMapping(e));
         } else {
+            logger.error(`method called: 'create', with params: ${JSON.stringify({ params: req.body })} - ${ e.message }`);
             res.status(500).send(e.message);
         }
     }

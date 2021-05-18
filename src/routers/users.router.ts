@@ -27,6 +27,7 @@ usersRouter.get('/', async (req: Request, res: Response) => {
         logger.info(`method called: 'findAll', with params: no params`);
         res.send(users);
     } catch (e) {
+        logger.error(`method called: 'findAll', with params: no params - ${ e.message }`);
         res.status(500).send(e.message);
     }
 });
@@ -41,6 +42,7 @@ usersRouter.get('/search', async(req: Request, res: Response) => {
         logger.info(`method called: 'findAll', with params: ${JSON.stringify({loginSubstring, limit})}`)
         res.send(users);
     } catch (e) {
+        logger.error(`method called: 'findAll', with params: ${JSON.stringify({loginSubstring, limit})} - ${e.message}`)
         res.status(500).send(e.message);
     }
 });
@@ -59,6 +61,7 @@ usersRouter.get('/:id', async(req: Request, res: Response) => {
 
         res.status(404).send('user not found');
     } catch (e) {
+        logger.error(`method called: 'find', with params: ${JSON.stringify({ id })} - ${e.message}`);
         res.status(500).send(e.message);
     }
 });
@@ -75,6 +78,7 @@ usersRouter.post('/', async(req: Request, res: Response) => {
         if (e instanceof Sequelize.ValidationError) {
             res.status(400).send(validatorMapping(e));
         } else {
+            logger.error(`method called: 'create', with params: ${JSON.stringify({ user: req.body })} - ${e.message}`);
             res.status(500).send(e.message);
         }
     }
@@ -101,6 +105,7 @@ usersRouter.patch('/:id', async(req: Request, res: Response) => {
 
         res.status(201).json(newUser);
     } catch (e) {
+        logger.error(`method called: 'update', with params: ${JSON.stringify({ id, userUpdate: req.body })} - ${e.message}`);
         if (e instanceof Sequelize.ValidationError) {
             res.status(400).send(validatorMapping(e));
         } else {
@@ -111,14 +116,14 @@ usersRouter.patch('/:id', async(req: Request, res: Response) => {
 
 // DELETE users/:id
 usersRouter.delete('/:id', async (req: Request, res: Response) => {
+    const id : number = parseInt(req.params.id, 10);
     try {
-        const id : number = parseInt(req.params.id, 10);
         logger.info(`method called: 'remove', with params: ${JSON.stringify({ id })}`);
         await UserService.remove(id);
 
         res.sendStatus(204);
     } catch (e) {
+        logger.error(`method called: 'remove', with params: ${JSON.stringify({ id })} - ${e.message}`);
         res.status(500).send(e.message);
-
     }
 });
