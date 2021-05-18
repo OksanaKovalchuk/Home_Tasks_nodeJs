@@ -6,7 +6,7 @@ import Sequelize from 'sequelize';
 import * as GroupService from '../services/group.service';
 import { group as groupModel } from '../models/group';
 import { validatorMapping } from '../utils/validator.utils';
-
+import { groupLogger as logger } from '../config/winston';
 
 export const groupsRouter = express.Router();
 
@@ -19,6 +19,7 @@ groupsRouter.get('/', async (req: Request, res: Response) => {
     try {
         const groupList = await GroupService.findAll();
 
+        logger.info(`method called: 'findAll', with params: no params`);
         res.send(groupList);
     } catch (e) {
         res.status(500).send(e.message);
@@ -34,6 +35,7 @@ groupsRouter.get('/:id', async(req: Request, res: Response) => {
         const group = await GroupService.find(id);
 
         if (group) {
+            logger.info(`method called: 'find', with params: ${JSON.stringify({ id })}`)
             return res.send(group);
         }
 
@@ -48,6 +50,7 @@ groupsRouter.post('/', async(req: Request, res: Response) => {
     try {
         const newGroup: groupModel = req.body;
         const createdGroup = await GroupService.create(newGroup);
+        logger.info(`method called: 'create', with params: ${JSON.stringify({ newGroup })}`);
 
         res.status(201).json(createdGroup);
     } catch (e) {
@@ -70,10 +73,12 @@ groupsRouter.patch('/:id', async(req: Request, res: Response) => {
 
         if (existingGroup) {
             const updatedGroup = await GroupService.update(id, groupUpdate);
+            logger.info(`method called: 'update', with params: ${JSON.stringify({ id, groupUpdate })}`);
             return res.json(updatedGroup);
         }
 
         const newGroup = await GroupService.create(groupUpdate);
+        logger.info(`method called: 'create', with params: ${JSON.stringify({ groupUpdate })}`);
 
         res.status(201).json(newGroup);
     } catch (e) {
@@ -90,6 +95,7 @@ groupsRouter.delete('/:id', async (req: Request, res: Response) => {
     try {
         const id : number = parseInt(req.params.id, 10);
         await GroupService.remove(id);
+        logger.info(`method called: 'remove', with params: ${JSON.stringify({ id })}`);
 
         res.sendStatus(204);
     } catch (e) {

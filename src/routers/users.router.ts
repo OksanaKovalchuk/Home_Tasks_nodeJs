@@ -6,7 +6,7 @@ import Sequelize from 'sequelize';
 import * as UserService from '../services/users.service';
 import { validatorMapping } from '../utils/validator.utils';
 import { User } from '../models/user';
-
+import { userLogger as logger } from '../config/winston';
 
 /**
  * Router Definition
@@ -24,6 +24,7 @@ usersRouter.get('/', async (req: Request, res: Response) => {
         // @ts-ignore
         const users = await UserService.findAll();
 
+        logger.info(`method called: 'findAll', with params: no params`);
         res.send(users);
     } catch (e) {
         res.status(500).send(e.message);
@@ -37,6 +38,7 @@ usersRouter.get('/search', async(req: Request, res: Response) => {
     try {
         const users = await UserService.findAll(loginSubstring, limit);
 
+        logger.info(`method called: 'findAll', with params: ${JSON.stringify({loginSubstring, limit})}`)
         res.send(users);
     } catch (e) {
         res.status(500).send(e.message);
@@ -51,6 +53,7 @@ usersRouter.get('/:id', async(req: Request, res: Response) => {
         const user = await UserService.find(id);
 
         if (user) {
+            logger.info(`method called: 'find', with params: ${JSON.stringify({ id })}`);
             return res.send(user);
         }
 
@@ -65,6 +68,7 @@ usersRouter.post('/', async(req: Request, res: Response) => {
     try {
         const user: User = req.body;
         const newUser = await UserService.create(user);
+        logger.info(`method called: 'create', with params: ${JSON.stringify({ user })}`);
 
         res.status(201).json(newUser);
     } catch (e) {
@@ -76,7 +80,7 @@ usersRouter.post('/', async(req: Request, res: Response) => {
     }
 });
 
-// PUT users/:id
+// PATCH users/:id
 usersRouter.patch('/:id', async(req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
 
@@ -84,11 +88,14 @@ usersRouter.patch('/:id', async(req: Request, res: Response) => {
         const userUpdate: User = req.body;
 
         const existingUser = await UserService.find(id);
+        logger.info(`method called: 'find', with params: ${JSON.stringify({ id })}`);
 
         if (existingUser) {
             const updatedUser = await UserService.update(id, userUpdate);
+            logger.info(`method called: 'update', with params: ${JSON.stringify({ id, userUpdate })}`);
             return res.json(updatedUser);
         }
+        logger.info(`method called: 'create', with params: ${JSON.stringify({ userUpdate })}`);
 
         const newUser = await UserService.create(userUpdate);
 
@@ -106,6 +113,7 @@ usersRouter.patch('/:id', async(req: Request, res: Response) => {
 usersRouter.delete('/:id', async (req: Request, res: Response) => {
     try {
         const id : number = parseInt(req.params.id, 10);
+        logger.info(`method called: 'remove', with params: ${JSON.stringify({ id })}`);
         await UserService.remove(id);
 
         res.sendStatus(204);

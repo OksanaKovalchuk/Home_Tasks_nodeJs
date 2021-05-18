@@ -1,4 +1,3 @@
-// task2_1_index.ts
 /**
  * Required External Modules
  */
@@ -8,6 +7,7 @@ import cors from "cors";
 import helmet from "helmet";
 import { usersRouter } from './routers/users.router';
 import { groupsRouter } from './routers/groups.router';
+import { logger } from './config/winston';
 
 dotenv.config();
 
@@ -39,4 +39,15 @@ app.use('/api/groups', groupsRouter);
 
 app.listen(PORT, () => {
     // console.log(`Listening on port ${PORT}`);
+});
+
+app.use((err: { message: any; }, req: { method: any; originalUrl: any; ip: any; }, res: any, next: (arg0: any) => void) => {
+    logger.error(`${req.method} - ${err.message}  - ${req.originalUrl} - ${req.ip}`);
+    next(err);
+    res.send(500);
+})
+
+process.on('uncaughtException', (err: any) => {
+    logger.error(`Caught exception: ${err}\n`);
+    process.exit(1);
 });
