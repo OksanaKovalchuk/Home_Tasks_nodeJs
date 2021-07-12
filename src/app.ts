@@ -8,8 +8,16 @@ import helmet from "helmet";
 import { usersRouter } from './routers/users.router';
 import { groupsRouter } from './routers/groups.router';
 import { logger } from './config/winston';
+import winston from 'winston';
 
 dotenv.config();
+const logger = winston.createLogger({
+    format: winston.format.json(),
+    defaultMeta: { service: 'user-service' },
+    transports: [
+        new winston.transports.File({ filename: 'winston.log' })
+    ]
+});
 
 /**
  * App Variables

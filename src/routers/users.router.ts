@@ -2,6 +2,8 @@
  * Required External Modules and Interfaces
  */
 import express, { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import Sequelize from 'sequelize';
 import * as UserService from '../services/users.service';
 import { validatorMapping } from '../utils/validator.utils';
@@ -17,6 +19,49 @@ export const usersRouter = express.Router();
 /**
  * Controller Definitions
  */
+usersRouter.post("/login", async (req, res) => {
+
+    // Our login logic starts here
+    try {
+        // Get user input
+        const { login, password } = req.body;
+
+        // Validate user input
+        if (!(login && password)) {
+            res.status(400).send("All input is required");
+        }
+        const users = await UserService.findAll(login, 20) || [];
+
+        // Validate if user exist in our database
+        // tslint:disable-next-line:no-shadowed-variable
+        const user = users.rows.filter(user => {
+            return user.login === login;
+        })[0];
+
+
+        if (user && password === user.password) {
+            // Create token
+            const token = jwt.sign(
+                { user_id: user.id, login },
+                'node_js-6-token',
+                {
+                    expiresIn: "2h",
+                }
+            );
+
+            // save user token
+            const userwithToken = Object.assign(user, { token });
+
+            // user
+            res.status(200).json(userwithToken);
+        }
+        res.status(400).send("Invalid Credentials");
+    } catch (err) {
+        console.log(err);
+    }
+    // Our register logic ends here
+// }
+});
 
 // GET users
 usersRouter.get('/', async (req: Request, res: Response) => {
@@ -75,6 +120,7 @@ usersRouter.post('/', async(req: Request, res: Response) => {
 
         res.status(201).json(newUser);
     } catch (e) {
+        logger.error(`method called: 'create', with params: ${JSON.stringify({ user: req.body })} - ${e.message}`);
         if (e instanceof Sequelize.ValidationError) {
             res.status(400).send(validatorMapping(e));
         } else {
